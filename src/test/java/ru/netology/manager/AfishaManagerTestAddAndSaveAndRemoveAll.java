@@ -2,12 +2,23 @@ package ru.netology.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import ru.netology.domain.FilmItem;
+import ru.netology.repository.AfishaRepository;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.mockito.Mockito.*;
 
-public class AfishaManagerMoreThen10Films {
-    private AfishaManager manager = new AfishaManager();
+@ExtendWith(MockitoExtension.class)
+public class AfishaManagerTestAddAndSaveAndRemoveAll {
+    @Mock
+    private AfishaRepository repository;
+
+    @InjectMocks
+    private AfishaManager manager;
     private FilmItem one = new FilmItem(1, "https://", "One Flew Over the Cuckoo's Nest (1975)", 1);
     private FilmItem two = new FilmItem(2, "https://", "Two Women (1960)", 1);
     private FilmItem three = new FilmItem(3, "https://", "Three Men and a Baby (1987)", 1);
@@ -46,13 +57,36 @@ public class AfishaManagerMoreThen10Films {
         assertArrayEquals(expected, actual);
     }*/
 
+
+    // add+save
     @Test
     public void shouldBeTenMovie() {
+        FilmItem[] returned = new FilmItem[]{three, four, five, six, seven, eight,
+                nine, ten, eleven, twelve};
+        doReturn(returned).when(repository).findAll();
+        doNothing().when(repository).save(three);
 
+        manager.add(three);
         FilmItem[] actual = manager.getAll();
         FilmItem[] expected = new FilmItem[]{twelve, eleven, ten, nine, eight,
                 seven, six, five, four, three};
 
         assertArrayEquals(expected, actual);
+        verify(repository).save(three);
     }
+
+    // removeAll
+    @Test
+    public void shouldRemoveAll() {
+        FilmItem[] returned = new FilmItem[]{};
+        doReturn(returned).when(repository).findAll();
+        doNothing().when(repository).removeAll();
+
+        manager.removeAll();
+        FilmItem[] expected = new FilmItem[]{six, five};
+        FilmItem[] actual = manager.getAll();
+        assertArrayEquals(expected, actual);
+        verify(repository).removeAll();
+    }
+
 }

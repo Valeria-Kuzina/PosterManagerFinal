@@ -14,4 +14,9 @@ public class FilmItem {
 
     public FilmItem(int i, String s, String s1, int i1) {
     }
+
+    public int getId() {
+        return id;
+    }
+
 }
